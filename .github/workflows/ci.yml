@@ -1,0 +1,97 @@
+# Two jobs, and they are supposed to disagree with each other.
+#
+# `smoke` must stay green. It proves the app imports, the artifact trains
+# and loads, and /health answers. If it goes red, you broke the scaffolding
+# rather than the assignment.
+#
+# `contract-tests` is red the moment you click "Use this template", because
+# those tests are stubs you have not written yet. That red X is the
+# assignment, visible from the repository page. It turns green when you
+# finish, and a reviewer can see at a glance which of the two you are.
+#
+# Note what this is NOT: a deploy pipeline. Railway and Render watch your
+# repository and deploy on their own. The coursework audit found that every
+# GitHub Actions workflow across the whole IS core was deploy-only, with no
+# test step, meaning no pipeline could ever fail for a reason other than a
+# build error. This one can, which is the entire point of having it.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  smoke:
+    name: smoke (must stay green)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      # The artifact is gitignored, so CI trains it the same way a fresh
+      # clone does. If this step fails, a new student cannot start.
+      - name: Train the model
+        run: python train.py
+
+      - name: Smoke tests
+        run: pytest tests/test_smoke.py -v
+
+      # Belt and braces on top of the smoke tests: hit /health the way a
+      # platform healthcheck would, against a real uvicorn process rather
+      # than TestClient.
+      - name: Serve and curl /health
+        run: |
+          uvicorn app.main:app --host 127.0.0.1 --port 8000 &
+          for _ in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:8000/health > /tmp/health.json && break
+            sleep 1
+          done
+          cat /tmp/health.json
+          python - <<'PY'
+          import json
+          body = json.load(open("/tmp/health.json"))
+          assert body["status"] == "ok", body
+          assert body["model"]["loaded"] is True, body
+          print("health ok, model version", body["model"]["version"])
+          PY
+
+      # Fails loudly if a real .env ever gets committed. The rubric treats
+      # a secret in git history as an automatic fail, and this is cheaper
+      # than finding out later.
+      - name: Check for committed secrets
+        run: |
+          if git ls-files | grep -E '(^|/)\.env$'; then
+            echo "::error::A real .env file is tracked in git. Remove it and rotate the credentials."
+            exit 1
+          fi
+          echo "No tracked .env files."
+
+  contract-tests:
+    name: contract tests (red until you write them)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Train the model
+        run: python train.py
+
+      # Expected to fail on a fresh template. The stubs in
+      # tests/test_contract.py call pytest.fail with instructions in the
+      # message, so the log tells you what to write.
+      - name: Contract tests
+        run: pytest tests/test_contract.py -v
