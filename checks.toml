@@ -1,0 +1,41 @@
+# Thresholds for the data quality gates in scripts/checks.py.
+#
+# These live in a config file rather than in the code because a threshold is a
+# judgement about your data, not a fact about the program. Someone reviewing
+# your pipeline should be able to read what you decided without reading Python.
+#
+# Severity decides what a failure does:
+#   blocking  the dashboard hides the affected numbers and shows a red banner,
+#             and the refresh workflow exits non-zero so you get an email
+#   warning   the dashboard publishes the numbers with a visible caveat
+
+[core]
+# Floor, not a target. The shipped extract has 20,000 loans. A run that comes
+# back with 900 is a truncated export, not a quiet month, and publishing it
+# would redraw every chart on the page with a straight face.
+min_loan_rows = 15000
+
+# How far the row count may move between two consecutive runs before the gate
+# fires, as a percent. This is the gate that catches a source that half-loaded.
+# Set it from what your data actually does: a feed that grows 1% a day and one
+# that doubles on Mondays want very different numbers here.
+max_row_drift_pct = 10.0
+
+# Values patron_type is allowed to take. If the upstream system adds a category
+# or renames one, every chart grouped by patron type silently changes meaning
+# and nothing errors. Naming the domain is how you find out.
+patron_types = ["Undergraduate", "Graduate", "Faculty", "Staff"]
+
+[student]
+# TODO — this one is yours, and it ships unset on purpose.
+#
+# How old may the newest row in your source be before the dashboard is lying?
+# There is no correct answer here. It depends entirely on what you connected:
+# a nightly library extract that is 3 days old is broken, and a quarterly
+# enrollment file that is 3 days old is early. Pick the number for YOUR source,
+# uncomment the line, and write down why you picked it in MAKE_IT_YOURS.md.
+#
+# Until you set it, the data_recency gate reports "not configured" and the
+# `dashboard (red until you finish it)` CI job stays red.
+#
+# max_data_age_days = 30

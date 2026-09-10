@@ -1,0 +1,68 @@
+{
+  "run_started_at": "2026-09-10T19:04:40+00:00",
+  "run_finished_at": "2026-09-10T19:04:40+00:00",
+  "source": "committed seed extract (data/library_loans.csv)",
+  "status": "ok",
+  "suite": "core",
+  "loan_rows": 20000,
+  "oldest_checkout": "2024-09-01",
+  "newest_checkout": "2026-08-31",
+  "checks": [
+    {
+      "name": "loan_row_count",
+      "suite": "core",
+      "severity": "blocking",
+      "status": "pass",
+      "detail": "20,000 loan rows against a floor of 15,000"
+    },
+    {
+      "name": "row_count_drift",
+      "suite": "core",
+      "severity": "warning",
+      "status": "pass",
+      "detail": "20,000 rows, no previous run on record to compare against"
+    },
+    {
+      "name": "required_fields_not_null",
+      "suite": "core",
+      "severity": "blocking",
+      "status": "pass",
+      "detail": "9 columns clean"
+    },
+    {
+      "name": "referential_integrity",
+      "suite": "core",
+      "severity": "blocking",
+      "status": "pass",
+      "detail": "every loan resolves to a title, a patron and a branch"
+    },
+    {
+      "name": "loan_id_unique",
+      "suite": "core",
+      "severity": "blocking",
+      "status": "pass",
+      "detail": "20,000 rows, 20,000 distinct loan_id"
+    },
+    {
+      "name": "date_ordering",
+      "suite": "core",
+      "severity": "blocking",
+      "status": "pass",
+      "detail": "checkout <= due, checkout <= return everywhere"
+    },
+    {
+      "name": "no_future_checkouts",
+      "suite": "core",
+      "severity": "warning",
+      "status": "pass",
+      "detail": "no checkout_date after 2026-09-10"
+    },
+    {
+      "name": "categorical_domain",
+      "suite": "core",
+      "severity": "warning",
+      "status": "pass",
+      "detail": "patron_type holds exactly the 4 declared values"
+    }
+  ]
+}
