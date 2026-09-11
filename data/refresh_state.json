@@ -1,6 +1,6 @@
 {
-  "run_started_at": "2026-09-10T19:04:40+00:00",
-  "run_finished_at": "2026-09-10T19:04:40+00:00",
+  "run_started_at": "2026-09-11T16:49:15+00:00",
+  "run_finished_at": "2026-09-11T16:49:16+00:00",
   "source": "committed seed extract (data/library_loans.csv)",
   "status": "ok",
   "suite": "core",
@@ -18,9 +18,9 @@
     {
       "name": "row_count_drift",
       "suite": "core",
-      "severity": "warning",
+      "severity": "blocking",
       "status": "pass",
-      "detail": "20,000 rows, no previous run on record to compare against"
+      "detail": "20,000 -> 20,000 rows, 0.0% change against a 10.0% limit"
     },
     {
       "name": "required_fields_not_null",
@@ -55,7 +55,7 @@
       "suite": "core",
       "severity": "warning",
       "status": "pass",
-      "detail": "no checkout_date after 2026-09-10"
+      "detail": "no checkout_date after 2026-09-11"
     },
     {
       "name": "categorical_domain",
