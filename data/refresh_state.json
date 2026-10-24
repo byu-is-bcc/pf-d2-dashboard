@@ -1,6 +1,6 @@
 {
-  "run_started_at": "2026-10-23T17:35:19+00:00",
-  "run_finished_at": "2026-10-23T17:35:19+00:00",
+  "run_started_at": "2026-10-24T16:20:58+00:00",
+  "run_finished_at": "2026-10-24T16:20:59+00:00",
   "source": "committed seed extract (data/library_loans.csv)",
   "status": "ok",
   "suite": "core",
@@ -55,7 +55,7 @@
       "suite": "core",
       "severity": "warning",
       "status": "pass",
-      "detail": "no checkout_date after 2026-10-23"
+      "detail": "no checkout_date after 2026-10-24"
     },
     {
       "name": "categorical_domain",
