@@ -1,6 +1,6 @@
 {
-  "run_started_at": "2026-11-24T00:31:12+00:00",
-  "run_finished_at": "2026-11-24T00:31:12+00:00",
+  "run_started_at": "2026-11-24T22:50:28+00:00",
+  "run_finished_at": "2026-11-24T22:50:28+00:00",
   "source": "committed seed extract (data/library_loans.csv)",
   "status": "ok",
   "suite": "core",
